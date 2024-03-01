@@ -1,3 +1,10 @@
+/***
+Omma Habiba BIPLOB
+M2 Master Manager Dev
+Grp 1
+Projet Golang : Elections 2022
+***/
+
 package main
 
 import (
