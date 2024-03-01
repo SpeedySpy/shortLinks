@@ -63,6 +63,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
+// Extrait les données JSON de la requête HTTP pour obtenir l'URL longue
 func shortenUrl(w http.ResponseWriter, r *http.Request) {
 	var data map[string]string
 	err := json.NewDecoder(r.Body).Decode(&data)
