@@ -7,9 +7,10 @@
 **Installation**
 
 go init
-initiliser le projet, j'ai nommé Election2022 et cette commande m'a générer le fichier go.mod : go mod init Election2022
+initiliser le projet: go mod init : go mod init api
 go mod vendor
 compiler le fichier main.go : go run main.go
+fichier de test a tester : go run main_test.go
 
 **packages**
 
