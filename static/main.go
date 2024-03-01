@@ -1,8 +1,10 @@
 /***
 Omma Habiba BIPLOB
+Faiza AKABLI
+Biraveen SIVAHARAN
 M2 Master Manager Dev
 Grp 1
-Projet Golang : Elections 2022
+Projet Golang
 ***/
 
 package main
@@ -23,7 +25,7 @@ import (
 
 type URL struct {
 	ID           string    `json:"id" bson:"id"`
-	LongUrl      string    `json:"original_url" bson:"long_url"`
+	LongUrl      string    `json:"long_url" bson:"long_url"`
 	ShortUrl     string    `json:"short_url" bson:"short_url"`
 	ExpirationAt time.Time `json:"expiration_at" bson:"expiration_at"`
 }
@@ -31,7 +33,7 @@ type URL struct {
 const (
 	mongoURI       = "mongodb://localhost:27017/"
 	dbName         = "url_shortener"
-	collectionName = "Urls"
+	collectionName = "urls"
 )
 
 var client *mongo.Client
@@ -57,9 +59,6 @@ func main() {
 
 	r.HandleFunc("/shorten", shortenUrl).Methods("POST")
 	r.HandleFunc("/get-long-url", redirectToLongURL).Methods("POST")
-	r.HandleFunc("/{shortUrl}", redirectHandler).Methods("GET")
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
@@ -72,18 +71,16 @@ func shortenUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	longURL := data["original_url"]
-
 	uuidShortID := uuid.New().String()
 	shortID := uuidShortID[:8]
 
 	expirationTime := time.Now().Add(24 * time.Hour)
 
-	shortURL := "http://localhost:8080/" + shortID
+	shortURL := "http://reclink.com/" + shortID
 
 	_, err = collection.InsertOne(context.Background(), URL{
 		ID:           shortID,
-		LongUrl:      longURL,
+		LongUrl:      data["long_url"],
 		ShortUrl:     shortURL,
 		ExpirationAt: expirationTime,
 	})
@@ -103,7 +100,12 @@ func redirectToLongURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	shortURL := requestData["short_url"]
+	// Puisque vous voulez utiliser "long_url" pour l'URL courte, changez la clé ici.
+	shortURL, ok := requestData["long_url"]
+	if !ok {
+		http.Error(w, "long_url not provided", http.StatusBadRequest)
+		return
+	}
 
 	var url URL
 	err = collection.FindOne(context.Background(), bson.M{"short_url": shortURL}).Decode(&url)
@@ -117,18 +119,5 @@ func redirectToLongURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, url.LongUrl, http.StatusFound)
-}
-
-func redirectHandler(w http.ResponseWriter, r *http.Request) {
-	shortURL := r.URL.Path[1:]
-
-	var url URL
-	err := collection.FindOne(context.Background(), bson.M{"short_url": shortURL}).Decode(&url)
-	if err != nil {
-		http.Error(w, "URL not found", http.StatusNotFound)
-		return
-	}
-
-	http.Redirect(w, r, url.LongUrl, http.StatusSeeOther)
+	json.NewEncoder(w).Encode(map[string]string{"long_url": url.LongUrl})
 }
