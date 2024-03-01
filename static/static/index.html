@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <h1>URL Shortener</h1>
+    <div class="form-container">
+        <form id="shorten-form">
+            <label for="original-url">URL Original</label>
+            <input type="url" id="original-url" name="original_url" placeholder="Insérer l'url longue" required>
+            <button type="button" onclick="shortenUrl()">Raccourcir</button>
+            <p></p>
+        </form>
+        <form id="redirect-form" action="/redirect" method="post">
+            <label for="short-url">URL Courte</label>
+            <input type="url" id="short-url" name="short_url" placeholder="Insérer l'url courte" required>
+            <button type="button" onclick="redirect()">Rediriger</button>
+        </form>
+    </div>
+    <script>
+        function shortenUrl() {
+            var originalUrl = document.getElementById("original-url").value;
+            fetch('/shorten', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    original_url: originalUrl
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("short-url").textContent = data.short_url;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function redirect() {
+            var shortUrl = document.getElementById("short-url").value;
+            console.log(shortUrl)
+            fetch('/get-long-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    short_url: shortUrl
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.long_url) {
+                    window.location.href = data.long_url;
+                } else {
+                    alert('URL courte non valide ou expirée.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+
+<!-- <footer>
+    Akabli Faïza ● Biplob Omma-Habiba ● SIVAHARAN Biraveen
+</footer> -->
+
+</html>
