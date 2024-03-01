@@ -6,11 +6,11 @@
 
 **Installation**
 
-go init
-initiliser le projet: go mod init : go mod init api
-go mod vendor
-compiler le fichier main.go : go run main.go
-fichier de test a tester : go run main_test.go
+- go init
+- initiliser le projet: go mod init : go mod init api
+- go mod vendor
+- compiler le fichier main.go : go run main.go
+- fichier de test a tester : go run main_test.go
 
 **packages**
 
@@ -64,5 +64,9 @@ Extrait les données JSON de la requête HTTP pour obtenir l'URL courte.
 Recherche l'URL correspondante dans la collection MongoDB.
 Si l'URL est trouvée et n'a pas expiré, renvoie l'URL longue en tant que réponse JSON.
 Sinon, renvoie une erreur correspondante.
+
+** Résultat du test du fichier main_test.go**
+
+<img width="443" alt="image" src="https://github.com/SpeedySpy/shortLinks/assets/75846636/35a5fd7b-708f-4293-9417-3dcfa4ccf317">
 
 
